@@ -54,6 +54,12 @@ int main() {
     ConfigReader config(test1);
     House h1(config.getLayout());
     config.displayConfig();
-
+    std::vector<std::vector<int>> matrix1 = h1.getHouseMatrix();
+    for (const auto& row : matrix1) {
+        for (int cell : row) {
+            std::cout << cell << " ";
+        }
+        std::cout << std::endl;
+    }
     return 0;
 }
