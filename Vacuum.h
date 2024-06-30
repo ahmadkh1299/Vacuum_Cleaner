@@ -24,7 +24,6 @@ private:
 public:
 
     Vacuum();
-
     // User-defined constructor
     Vacuum(const House& h, int max_battery, int max_mission, const std::pair<int, int>& dock,
            const std::pair<int, int>& location, int battery_level, int steps_num);
@@ -86,6 +85,9 @@ public:
         curr_steps_num = steps;
     }
     void chargeBattery();
+    void update();
+    bool Max_allowed_steps() const;
+    bool located_at_D() const;
 
 };
 
