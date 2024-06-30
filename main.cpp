@@ -13,11 +13,6 @@ public:
         parseConfig();
     }
 
-    void displayConfig() const {
-        std::cout << "Max Battery Steps: " << max_battery_steps << std::endl;
-        std::cout << "Max Mission Steps: " << max_mission_steps << std::endl;
-    }
-
     const std::vector<std::string>& getLayout() const {
         return layout;
     }
@@ -53,7 +48,6 @@ int main() {
     std::string test1 = "C:\\Users\\97250\\Desktop\\TAU\\5th\\Advanced Programing\\HW\\test1.txt";
     ConfigReader config(test1);
     House h1(config.getLayout());
-    config.displayConfig();
     std::vector<std::vector<int>> matrix1 = h1.getHouseMatrix();
     for (const auto& row : matrix1) {
         for (int cell : row) {
@@ -61,5 +55,8 @@ int main() {
         }
         std::cout << std::endl;
     }
+    std::pair<int, int> dockingStationCoords = h1.getDockingStation();
+    std::cout << "Docking Station Coordinates: (" << dockingStationCoords.first
+              << ", " << dockingStationCoords.second << ")" << std::endl;
     return 0;
 }

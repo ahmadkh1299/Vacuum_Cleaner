@@ -1,0 +1,3 @@
+C:/Users/97250/Desktop/TAU/5th/Advanced Programing/HW/cmake-build-debug/CMakeFiles/HW.dir
+C:/Users/97250/Desktop/TAU/5th/Advanced Programing/HW/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/97250/Desktop/TAU/5th/Advanced Programing/HW/cmake-build-debug/CMakeFiles/rebuild_cache.dir

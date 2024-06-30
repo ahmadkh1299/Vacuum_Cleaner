@@ -12,6 +12,7 @@ public:
 
     void initializeMatrix(const std::vector<std::string>& layout_v);
     void findDockingStation();
+    void addWallsPadding(std::vector<std::string>& layout_v);
 
     const std::vector<std::vector<int>>& getHouseMatrix() const {
         return house_matrix;
