@@ -1,0 +1,54 @@
+North
+East
+Stay
+Stay
+Stay
+Stay
+Stay
+Stay
+West
+South
+West
+North
+Stay
+Stay
+Stay
+Stay
+Stay
+East
+West
+West
+West
+Stay
+South
+East
+Stay
+Stay
+West
+North
+East
+South
+West
+North
+South
+East
+West
+West
+South
+West
+West
+East
+North
+South
+East
+West
+West
+West
+Stay
+North
+East
+West
+Total steps: 50
+Remaining dirt: 0
+Vacuum cleaner status: Alive
+Mission status: Failure

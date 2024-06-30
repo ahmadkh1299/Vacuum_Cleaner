@@ -14,24 +14,10 @@ public:
     void findDockingStation();
     void addWallsPadding(std::vector<std::string>& layout_v);
 
-    const std::vector<std::vector<int>>& getHouseMatrix() const {
-        return house_matrix;
-    }
-
-    std::pair<int, int> getDockingStation() const {
-        return docking_station;
-    }
-
-    int getWidth() const {
-        return width;
-    }
-
-    int getLength() const {
-        return length;
-    }
-
-    bool Wall_cell(int i,int j) const;
-    bool legeal_cell(int x,int y) const;
+    std::vector<std::vector<int>>& getHouseMatrix(); // Removed const
+    std::pair<int, int> getDockingStation() const;
+    int getWidth() const;
+    int getLength() const;
 
 private:
     std::vector<std::vector<int>> house_matrix;

@@ -1,89 +1,35 @@
 #ifndef VACUUM_H
 #define VACUUM_H
+
 #include "House.h"
+#include "Algorithm.h"
+#include <stack>
 #include <vector>
-#include <string>
-#include <stdexcept>
-#include <utility>
 
 class Vacuum {
-private:
-    House house;
-    int max_battery_vacuum;
-    int max_mission_vacuum;
-    std::pair<int, int> docking_station;
-    std::pair<int, int> curr_location;
-    int curr_battery_level;
-    int curr_steps_num;
-
 public:
+    Vacuum(House& house, Algorithm& algorithm, int max_battery_steps, int max_mission_steps);
 
-    Vacuum();
-    // User-defined constructor
-    Vacuum(House  h, int max_battery, int max_mission, std::pair<int, int>  dock,
-           std::pair<int, int>  location, int battery_level, int steps_num);
-    // Getters
-    House getHouse() const {
-        return house;
-    }
+    void simulate();
+    void outputResults(const std::string& output_file) const;
 
-    int getMaxBatteryVacuum() const {
-        return max_battery_vacuum;
-    }
+private:
+    House& house;
+    Algorithm& algorithm;
+    int battery_steps;
+    int max_battery_steps;
+    int max_mission_steps;
+    int total_steps;
+    std::pair<int, int> current_location;
+    std::stack<MoveDirection> history;
 
-    int getMaxMissionVacuum() const {
-        return max_mission_vacuum;
-    }
-
-    std::pair<int, int> getDockingStation() const {
-        return docking_station;
-    }
-
-    std::pair<int, int> getCurrLocation() const {
-        return curr_location;
-    }
-
-    int getCurrBatteryLevel() const {
-        return curr_battery_level;
-    }
-
-    int getCurrStepsNum() const {
-        return curr_steps_num;
-    }
-
-    // Setters
-    void setHouse(const House& h) {
-        house = h;
-    }
-
-    void setMaxBatteryVacuum(int battery) {
-        max_battery_vacuum = battery;
-    }
-
-    void setMaxMissionVacuum(int mission) {
-        max_mission_vacuum = mission;
-    }
-
-    void setDockingStation(const std::pair<int, int>& dock) {
-        docking_station = dock;
-    }
-
-    void setCurrLocation(const std::pair<int, int>& location) {
-        curr_location = location;
-    }
-
-    void setCurrBatteryLevel(int battery) {
-        curr_battery_level = battery;
-    }
-
-    void setCurrStepsNum(int steps) {
-        curr_steps_num = steps;
-    }
+    bool move(MoveDirection direction);
+    int getDirtLevel() const;
+    bool isWall(MoveDirection direction) const;
     void chargeBattery();
-    void update();
-    bool Max_allowed_steps() const;
-    bool located_at_D() const;
+    void logStep(MoveDirection direction);
 
+    std::vector<std::string> log;
 };
 
-#endif //VACUUM_H
+#endif // VACUUM_H

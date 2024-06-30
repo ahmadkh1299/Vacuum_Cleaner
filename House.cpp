@@ -50,13 +50,6 @@ void House::findDockingStation() {
     }
 }
 
-bool House::Wall_cell(int i, int j) const {
-    return getHouseMatrix()[i][j]==-1;
-}
-bool House::legeal_cell(int i,int j) const {
-    return (j<width&&i<length);
-}
-
 void House::addWallsPadding(std::vector<std::string>& layout_v) {
     int max_length = 0;
 
@@ -107,4 +100,20 @@ void House::addWallsPadding(std::vector<std::string>& layout_v) {
         layout_v.insert(layout_v.begin(), wall_row);
         layout_v.push_back(wall_row);
     }
+}
+
+std::vector<std::vector<int>>& House::getHouseMatrix() {
+    return house_matrix;
+}
+
+std::pair<int, int> House::getDockingStation() const {
+    return docking_station;
+}
+
+int House::getWidth() const {
+    return width;
+}
+
+int House::getLength() const {
+    return length;
 }

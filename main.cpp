@@ -1,10 +1,12 @@
 #include "House.h"
+#include "Algorithm.h"
+#include "Vacuum.h"
 #include <iostream>
 #include <fstream>
 #include <vector>
 #include <string>
 #include <sstream>
-using namespace std; //not recommended
+using namespace std;
 
 class ConfigReader {
 public:
@@ -15,6 +17,14 @@ public:
 
     const std::vector<std::string>& getLayout() const {
         return layout;
+    }
+
+    int getMaxBatterySteps() const {
+        return max_battery_steps;
+    }
+
+    int getMaxMissionSteps() const {
+        return max_mission_steps;
     }
 
 private:
@@ -43,20 +53,15 @@ private:
     }
 };
 
-
 int main() {
-    std::string test1 = "C:\\Users\\97250\\Desktop\\TAU\\5th\\Advanced Programing\\HW\\test1.txt";
-    ConfigReader config(test1);
-    House h1(config.getLayout());
-    std::vector<std::vector<int>> matrix1 = h1.getHouseMatrix();
-    for (const auto& row : matrix1) {
-        for (int cell : row) {
-            std::cout << cell << " ";
-        }
-        std::cout << std::endl;
-    }
-    std::pair<int, int> dockingStationCoords = h1.getDockingStation();
-    std::cout << "Docking Station Coordinates: (" << dockingStationCoords.first
-              << ", " << dockingStationCoords.second << ")" << std::endl;
+    std::string input_file = "C:\\Users\\97250\\Desktop\\TAU\\5th\\Advanced Programing\\HW\\test1.txt";
+    ConfigReader config(input_file);
+    House house(config.getLayout());
+    Algorithm algorithm(house.getWidth(), house.getLength(), house.getDockingStation(), house.getDockingStation());
+    Vacuum vacuum(house, algorithm, config.getMaxBatterySteps(), config.getMaxMissionSteps());
+
+    vacuum.simulate();
+    vacuum.outputResults("C:\\Users\\97250\\Desktop\\TAU\\5th\\Advanced Programing\\HW\\output.txt");
+
     return 0;
 }
