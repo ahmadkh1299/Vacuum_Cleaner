@@ -10,6 +10,7 @@
 #include <string>
 #include <stdexcept>
 #include <utility>
+#include "Algorthim.h"
 
 class Vacuum {
 private:
@@ -20,6 +21,7 @@ private:
     std::pair<int, int> curr_location;
     int curr_battery_level;
     int curr_steps_num;
+
 
 public:
 
@@ -47,6 +49,13 @@ public:
     std::pair<int, int> getCurrLocation() const {
         return curr_location;
     }
+    int getx() const {
+        return curr_location.first;
+    }
+    int gety() const {
+        return curr_location.second;
+    }
+
 
     int getCurrBatteryLevel() const {
         return curr_battery_level;
@@ -81,6 +90,7 @@ public:
         curr_battery_level = battery;
     }
 
+
     void setCurrStepsNum(int steps) {
         curr_steps_num = steps;
     }
@@ -88,6 +98,8 @@ public:
     void update();
     bool Max_allowed_steps() const;
     bool located_at_D() const;
+    bool Wall_Sensor(MoveDirection dir);
+
 
 };
 

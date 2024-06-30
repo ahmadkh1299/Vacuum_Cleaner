@@ -32,3 +32,19 @@ bool Vacuum::Max_allowed_steps() const{ // lesh const??
 bool Vacuum::located_at_D() const {
     return (getCurrLocation().first==getDockingStation().first && getCurrLocation().second==getDockingStation().second);
 }
+bool Vacuum::Wall_Sensor(MoveDirection dir) {
+    switch (dir) {
+        case MoveDirection::North:
+            if(house.Wall_cell(getx()+1,gety())||house.legeal_cell(getx()+1,gety())) {
+                return true;
+            } return false;
+        case MoveDirection::South:
+            if (house.wall_cell(getx()-1,gety()||house.legeal_cell(getx()-1,gety())))
+
+
+
+
+
+    }
+}
+
