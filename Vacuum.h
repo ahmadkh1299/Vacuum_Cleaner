@@ -1,10 +1,5 @@
-//
-// Created by Mariam on 6/29/2024.
-//
-
 #ifndef VACUUM_H
 #define VACUUM_H
-
 #include "House.h"
 #include <vector>
 #include <string>
@@ -25,8 +20,8 @@ public:
 
     Vacuum();
     // User-defined constructor
-    Vacuum(const House& h, int max_battery, int max_mission, const std::pair<int, int>& dock,
-           const std::pair<int, int>& location, int battery_level, int steps_num);
+    Vacuum(House  h, int max_battery, int max_mission, std::pair<int, int>  dock,
+           std::pair<int, int>  location, int battery_level, int steps_num);
     // Getters
     House getHouse() const {
         return house;

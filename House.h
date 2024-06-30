@@ -12,6 +12,7 @@ public:
 
     void initializeMatrix(const std::vector<std::string>& layout_v);
     void findDockingStation();
+    void addWallsPadding(std::vector<std::string>& layout_v);
 
     const std::vector<std::vector<int>>& getHouseMatrix() const {
         return house_matrix;
@@ -28,6 +29,9 @@ public:
     int getLength() const {
         return length;
     }
+
+    bool Wall_cell(int i,int j) const;
+    bool legeal_cell(int x,int y) const;
 
 private:
     std::vector<std::vector<int>> house_matrix;
