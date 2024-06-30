@@ -19,7 +19,7 @@ class Algorithm {
 public:
     Algorithm(int width, int length, std::pair<int, int> curr_location, std::pair<int, int> docking_station);
     MoveDirection nextMove(int dirt_level, bool wall_north, bool wall_east, bool wall_south, bool wall_west);
-    std::stack<MoveDirection> findPathToDocking();
+    std::stack<MoveDirection> findPathToDocking(const std::stack<MoveDirection>& history);
 
 private:
     int house_width;
@@ -32,6 +32,7 @@ private:
     std::pair<int, int> directions[4] = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}}; // North, East, South, West
 
     MoveDirection getMoveDirection(std::pair<int, int> from, std::pair<int, int> to);
+    MoveDirection reverseDirection(MoveDirection direction); // Declare reverseDirection as a member function
 };
 
 #endif // ALGORITHM_H

@@ -1,10 +1,5 @@
-//
-// Created by Mariam on 6/29/2024.
-//
-
 #ifndef VACUUM_H
 #define VACUUM_H
-
 #include "House.h"
 #include <vector>
 #include <string>
@@ -24,7 +19,6 @@ private:
 public:
 
     Vacuum();
-
     // User-defined constructor
     Vacuum(House  h, int max_battery, int max_mission, std::pair<int, int>  dock,
            std::pair<int, int>  location, int battery_level, int steps_num);
@@ -86,6 +80,9 @@ public:
         curr_steps_num = steps;
     }
     void chargeBattery();
+    void update();
+    bool Max_allowed_steps() const;
+    bool located_at_D() const;
 
 };
 

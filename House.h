@@ -30,6 +30,9 @@ public:
         return length;
     }
 
+    bool Wall_cell(int i,int j) const;
+    bool legeal_cell(int x,int y) const;
+
 private:
     std::vector<std::vector<int>> house_matrix;
     std::pair<int, int> docking_station;
