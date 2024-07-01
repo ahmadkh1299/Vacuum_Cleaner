@@ -60,7 +60,6 @@ std::stack<MoveDirection> Algorithm::findPathToDocking(const std::stack<MoveDire
             reversed.push(move);
         }
     }
-    printPath(reversed);
     return reversed;
 }
 

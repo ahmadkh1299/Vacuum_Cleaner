@@ -10,7 +10,6 @@ Vacuum::Vacuum(House& house, Algorithm& algorithm, int max_battery_steps, int ma
 void Vacuum::simulate() {
     while (total_steps < max_mission_steps) {
         if (battery_steps <= history.size()) {
-            printf("location before going back to dock {%d,%d}\n", current_location.first, current_location.second);
             std::stack<MoveDirection> path_to_docking = algorithm.findPathToDocking(history);
             printPath(path_to_docking);
             while ((!path_to_docking.empty())  && total_steps<max_mission_steps) {
@@ -20,8 +19,6 @@ void Vacuum::simulate() {
                     update();
                 }
             }
-            printf("location after going back to dock {%d,%d}\n", current_location.first, current_location.second);
-            printf("Dock location {%d,%d}\n", house.getDockingStation().first, house.getDockingStation().second);
             if (located_at_D()) {
                 chargeBattery();
                 history = std::stack<MoveDirection>();
@@ -98,7 +95,6 @@ void Vacuum::outputResults(const std::string& output_file) const {
     }
 
     file << "Remaining dirt: " << remaining_dirt << std::endl;
-    printf("%d",house.gettotaldirt());
     file << "Vacuum cleaner status: " << (battery_steps <= 0 ? "Dead" : "Alive") << std::endl;
     file << "Mission status: " << (remaining_dirt == 0 && current_location == house.getDockingStation() ? "Success" : "Failure") << std::endl;
 
@@ -112,22 +108,20 @@ bool Vacuum::move(MoveDirection direction) {
     switch (direction) {
         case MoveDirection::North:
             new_x -= 1;
-            printf("North: ");
             break;
         case MoveDirection::East:
-            new_y += 1; printf("East: ");
+            new_y += 1;
             break;
         case MoveDirection::South:
-            new_x += 1;  printf("South: ");
+            new_x += 1;
             break;
         case MoveDirection::West:
-            new_y -= 1;  printf("West: ");
+            new_y -= 1;
             break;
         case MoveDirection::Stay:
         default:
             return true;
     }
-    printf("new cord {%d,%d} \n",new_x,new_y);
     if (new_x >= 0 && new_x < house.getLength() && new_y >= 0 && new_y < house.getWidth() && house.getHouseMatrix()[new_x][new_y] != -1) {
         current_location = {new_x, new_y};
         history.push(direction);
@@ -167,15 +161,11 @@ bool Vacuum::isWall(MoveDirection direction) const {
 }
 
 void Vacuum::chargeBattery() { // charging
-    printf("current battery: %d\n",battery_steps);
     float ch = max_battery_steps/20;
-    int steps_to_charge = ((max_battery_steps - battery_steps) * 20) / max_battery_steps;
-    while (battery_steps < max_battery_steps && steps_to_charge > 0 && total_steps<max_mission_steps) {
-        battery_steps+=ch;
-        steps_to_charge--;
+    while (battery_steps < max_battery_steps && total_steps < max_mission_steps) {
+        battery_steps += ch;
         total_steps++;
     }
-    printf("current battery: %d\n",battery_steps);
 }
 
 std::string moveDirectionToString(MoveDirection direction) {
