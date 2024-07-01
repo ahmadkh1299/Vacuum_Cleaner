@@ -8,68 +8,68 @@ Vacuum::Vacuum(House& house, Algorithm& algorithm, int max_battery_steps, int ma
 
 void Vacuum::simulate() {
     while (total_steps < max_mission_steps) {
-        if (battery_steps == history.size()-1) {
+        if (battery_steps == history.size()+1) {
             std::stack<MoveDirection> path_to_docking = algorithm.findPathToDocking(history);
             while (!path_to_docking.empty()) {
                 move(path_to_docking.top());
                 path_to_docking.pop();
+                update();
             }
             if(located_at_D()) {
                 chargeBattery();
-                history = std::stack<MoveDirection>();
+                printf("charging couse of battery leak!");
+                history = std::stack<MoveDirection>(); //new history stack
+                cordinate_stack=std::stack<std::pair<int,int>>(); //new history stack
             }
             // Clear history after recharging
-            continue;
+            //continue;
         }
+        else {
+            int dirt_level = getDirtLevel();
+            bool wall_north = isWall(MoveDirection::North);
+            bool wall_east = isWall(MoveDirection::East);
+            bool wall_south = isWall(MoveDirection::South);
+            bool wall_west = isWall(MoveDirection::West);
 
-        int dirt_level = getDirtLevel();
-        bool wall_north = isWall(MoveDirection::North);
-        bool wall_east = isWall(MoveDirection::East);
-        bool wall_south = isWall(MoveDirection::South);
-        bool wall_west = isWall(MoveDirection::West);
-
-        MoveDirection direction = algorithm.nextMove(dirt_level, wall_north, wall_east, wall_south, wall_west);
-        if (direction == MoveDirection::Stay && dirt_level > 0 && (!located_at_D())) {
-            house.getHouseMatrix()[current_location.first][current_location.second]--;
-            house.decreaseTotaldirt();
-            //we have to update the steps and battery
-            update();
-        }
-        logStep(direction);
-        if (!move(direction)) {
-            std::cerr << "Error: Move failed!" << std::endl;
-            break;
-        }
-
-
-
-
-        if (located_at_D()) {
-            chargeBattery();
-        }
-
-        //total_steps++;
-        //battery_steps--;
-
-        if (battery_steps <= 0) {
-            std::cerr << "Battery exhausted!" << std::endl;
-            break;
-        }
-
-        bool all_clean = true;
-        for (const auto& row : house.getHouseMatrix()) {
-            for (int cell : row) {
-                if (cell > 0 && cell < 20) {
-                    all_clean = false;
-                    break;
-                }
+            MoveDirection direction = algorithm.nextMove(dirt_level, wall_north, wall_east, wall_south, wall_west);
+            if (direction == MoveDirection::Stay && dirt_level > 0 &&  dirt_level <= 9 ) {
+                house.getHouseMatrix()[current_location.first][current_location.second]--;
+                house.decreaseTotaldirt();
+                //we have to update the steps and battery
             }
-            if (!all_clean) break;
-        }
+            logStep(direction);
+            if (!move(direction)) {
+                std::cerr << "Error: Move failed!" << std::endl;
+                break;
+            }
+            if (located_at_D()) {
+                chargeBattery();
+            }
+            update();
 
-        if (all_clean && current_location == house.getDockingStation()) {
-            std::cout << "Mission accomplished!" << std::endl;
-            break;
+            //total_steps++;
+            //battery_steps--;
+
+            if (battery_steps < 0) {
+                std::cerr << "Battery exhausted!" << std::endl;
+                break;
+            }
+
+            bool all_clean = true;
+            for (const auto& row : house.getHouseMatrix()) {
+                for (int cell : row) {
+                    if (cell > 0 && cell < 20) {
+                        all_clean = false;
+                        break;
+                    }
+                }
+                if (!all_clean) break;
+            }
+
+            if (all_clean && current_location == house.getDockingStation()) {
+                std::cout << "Mission accomplished!" << std::endl;
+                break;
+            }
         }
     }
 }
@@ -108,7 +108,7 @@ bool Vacuum::move(MoveDirection direction) {
 
     switch (direction) {
         case MoveDirection::North:
-            new_x -= 1; update();
+            new_x -= 1; update(); printf("%f", getx());
             break;
         case MoveDirection::East:
             new_y += 1; update();
@@ -127,6 +127,8 @@ bool Vacuum::move(MoveDirection direction) {
     if (new_x >= 0 && new_x < house.getLength() && new_y >= 0 && new_y < house.getWidth() && house.getHouseMatrix()[new_x][new_y] != -1) {
         current_location = {new_x, new_y};
         history.push(direction);
+        std::pair<int, int> coordinates = std::make_pair(new_x, new_y);
+        cordinate_stack.push(coordinates);
         return true;
     } else {
         return false;

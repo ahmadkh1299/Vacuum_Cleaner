@@ -12,16 +12,6 @@ public:
 
     void simulate();
     void outputResults(const std::string& output_file) const;
-
-private:
-    House& house;
-    Algorithm& algorithm;
-    int battery_steps;
-    int max_battery_steps;
-    int max_mission_steps;
-    int total_steps;
-    std::pair<int, int> current_location;
-    std::stack<MoveDirection> history;
     std::pair<int, int> getcurrent_location(){ return current_location;}
     int getx() const {
         return current_location.first;
@@ -43,6 +33,18 @@ private:
     bool located_at_D() const;
     void update();
     std::vector<std::string> log;
+
+private:
+    House& house;
+    Algorithm& algorithm;
+    int battery_steps;
+    int max_battery_steps;
+    int max_mission_steps;
+    int total_steps;
+    std::pair<int, int> current_location;
+    std::stack<MoveDirection> history;
+    std::stack<std::pair<int,int>> cordinate_stack;
+
 };
 
 #endif // VACUUM_H
