@@ -4,7 +4,7 @@ House::House()
         : docking_station(-1, -1), width(0), length(0) {}
 
 House::House(const std::vector<std::string>& layout_v)
-        : docking_station(-1, -1), width(0), length(0) {
+        : docking_station(-1, -1), width(0), length(0),total_dirt(0) {
     std::vector<std::string> layout_copy = layout_v;
     addWallsPadding(layout_copy);
     initializeMatrix(layout_copy);
@@ -23,6 +23,7 @@ void House::initializeMatrix(const std::vector<std::string>& layout_v) {
                 house_matrix[i][j] = -1;
             } else if (cell >= '1' && cell <= '9') {
                 house_matrix[i][j] = cell - '0';
+                total_dirt+=house_matrix[i][j];
             } else if (cell == 'D') {
                 docking_station = {i, j};
                 house_matrix[i][j] = 20;
@@ -116,4 +117,10 @@ int House::getWidth() const {
 
 int House::getLength() const {
     return length;
+}
+int House::gettotaldirt() const {
+    return total_dirt;
+}
+void House::decreaseTotaldirt() {
+    total_dirt--;
 }

@@ -3,12 +3,12 @@
 #include <iostream>
 
 Algorithm::Algorithm(int width, int length, std::pair<int, int> curr_location, std::pair<int, int> dock_station)
-        :house_width(width), house_length(length), current_location(std::move(curr_location)), docking_station(std::move(dock_station)) {
+        : house_width(width), house_length(length), current_location(std::move(curr_location)), docking_station(std::move(dock_station)) {
     // Initialize your algorithm here if needed
 }
 
 MoveDirection Algorithm::nextMove(int dirt_level, bool wall_north, bool wall_east, bool wall_south, bool wall_west) {
-    if (dirt_level > 0 & dirt_level< 9) {
+    if (dirt_level > 0 && dirt_level < 9) {
         return MoveDirection::Stay; // Clean the current location
     } else {
         std::vector<MoveDirection> possible_moves;
@@ -45,15 +45,53 @@ MoveDirection Algorithm::reverseDirection(MoveDirection direction) {
 
 std::stack<MoveDirection> Algorithm::findPathToDocking(const std::stack<MoveDirection>& history) {
     std::stack<MoveDirection> path;
-
-    // Reverse the history to find the path back
-    std::stack<MoveDirection> reverse_history = history;
-    while (!reverse_history.empty()) {
-        path.push(reverseDirection(reverse_history.top()));
-        reverse_history.pop();
+    std::stack<MoveDirection> temp_history = history;  // Copy of the original history stack to preserve order
+    std::stack<MoveDirection> reversed = std::stack<MoveDirection>();
+    while (!temp_history.empty()) {
+        reversed.push(temp_history.top());
+        temp_history.pop();
     }
+    temp_history = reversed;
+    reversed = std::stack<MoveDirection>();
+    while (!temp_history.empty()) {
+        MoveDirection move = reverseDirection(temp_history.top());
+        temp_history.pop();
+        if (move != MoveDirection::Stay) {
+            reversed.push(move);
+        }
+    }
+    printPath(reversed);
+    return reversed;
+}
 
-    return path;
+
+void Algorithm::printPath(const std::stack<MoveDirection>& path) const {
+    std::stack<MoveDirection> temp_path = path;
+
+    std::cout << "class algo Path: ";
+    while (!temp_path.empty()) {
+        MoveDirection move = temp_path.top();
+        temp_path.pop();
+        std::cout << moveDirectionToString1(move) << " ";
+    }
+    std::cout << std::endl;
+}
+
+std::string moveDirectionToString1(MoveDirection direction) {
+    switch (direction) {
+        case MoveDirection::North:
+            return "North";
+        case MoveDirection::East:
+            return "East";
+        case MoveDirection::South:
+            return "South";
+        case MoveDirection::West:
+            return "West";
+        case MoveDirection::Stay:
+            return "Stay";
+        default:
+            return "Unknown";
+    }
 }
 
 MoveDirection Algorithm::getMoveDirection(std::pair<int, int> from, std::pair<int, int> to) {
@@ -72,3 +110,5 @@ MoveDirection Algorithm::getMoveDirection(std::pair<int, int> from, std::pair<in
         return MoveDirection::Stay;
     }
 }
+
+

@@ -6,62 +6,72 @@ Vacuum::Vacuum(House& house, Algorithm& algorithm, int max_battery_steps, int ma
         : house(house), algorithm(algorithm), battery_steps(max_battery_steps), max_battery_steps(max_battery_steps),
           max_mission_steps(max_mission_steps), total_steps(0), current_location(house.getDockingStation()) {}
 
+
 void Vacuum::simulate() {
     while (total_steps < max_mission_steps) {
-        if (battery_steps == history.size()) {
+        if (battery_steps <= history.size()) {
+            printf("location before going back to dock {%d,%d}\n", current_location.first, current_location.second);
             std::stack<MoveDirection> path_to_docking = algorithm.findPathToDocking(history);
-            while (!path_to_docking.empty()) {
+            printPath(path_to_docking);
+            while ((!path_to_docking.empty())  && total_steps<max_mission_steps) {
                 move(path_to_docking.top());
                 path_to_docking.pop();
-            }
-            chargeBattery();
-            history = std::stack<MoveDirection>(); // Clear history after recharging
-            continue;
-        }
-
-        int dirt_level = getDirtLevel();
-        bool wall_north = isWall(MoveDirection::North);
-        bool wall_east = isWall(MoveDirection::East);
-        bool wall_south = isWall(MoveDirection::South);
-        bool wall_west = isWall(MoveDirection::West);
-
-        MoveDirection direction = algorithm.nextMove(dirt_level, wall_north, wall_east, wall_south, wall_west);
-        if (direction == MoveDirection::Stay && dirt_level > 0) {
-            house.getHouseMatrix()[current_location.first][current_location.second]--;
-        }
-
-        logStep(direction);
-        if (!move(direction)) {
-            std::cerr << "Error: Move failed!" << std::endl;
-            break;
-        }
-
-        if (house.getHouseMatrix()[current_location.first][current_location.second] == 20) {
-            chargeBattery();
-        }
-
-        total_steps++;
-        battery_steps--;
-
-        if (battery_steps <= 0) {
-            std::cerr << "Battery exhausted!" << std::endl;
-            break;
-        }
-
-        bool all_clean = true;
-        for (const auto& row : house.getHouseMatrix()) {
-            for (int cell : row) {
-                if (cell > 0 && cell < 20) {
-                    all_clean = false;
-                    break;
+                if (!located_at_D()) {
+                    update();
                 }
             }
-            if (!all_clean) break;
-        }
+            printf("location after going back to dock {%d,%d}\n", current_location.first, current_location.second);
+            printf("Dock location {%d,%d}\n", house.getDockingStation().first, house.getDockingStation().second);
+            if (located_at_D()) {
+                chargeBattery();
+                history = std::stack<MoveDirection>();
+            }
+            // Clear history after recharging
+           // continue;
+        } else {
 
-        if (all_clean && current_location == house.getDockingStation()) {
-            std::cout << "Mission accomplished!" << std::endl;
-            break;
+            int dirt_level = getDirtLevel();
+            bool wall_north = isWall(MoveDirection::North);
+            bool wall_east = isWall(MoveDirection::East);
+            bool wall_south = isWall(MoveDirection::South);
+            bool wall_west = isWall(MoveDirection::West);
+
+            MoveDirection direction = algorithm.nextMove(dirt_level, wall_north, wall_east, wall_south, wall_west);
+            if (direction == MoveDirection::Stay && dirt_level > 0 && (!located_at_D())) {
+                house.getHouseMatrix()[current_location.first][current_location.second]--;
+                house.decreaseTotaldirt();
+                //we have to update the steps and battery
+            }
+
+            logStep(direction);
+            if (!move(direction)) {
+                std::cerr << "Error: Move failed!" << std::endl;
+                break;
+            }
+            update();
+/*        if (located_at_D()) {
+            chargeBattery();
+        }*/
+            if (battery_steps < 0) {
+                std::cerr << "Battery exhausted!" << std::endl;
+                break;
+            }
+
+            bool all_clean = true;
+            for (const auto &row: house.getHouseMatrix()) {
+                for (int cell: row) {
+                    if (cell > 0 && cell < 20) {
+                        all_clean = false;
+                        break;
+                    }
+                }
+                if (!all_clean) break;
+            }
+
+            if (all_clean && current_location == house.getDockingStation()) {
+                std::cout << "Mission accomplished!" << std::endl;
+                break;
+            }
         }
     }
 }
@@ -81,13 +91,14 @@ void Vacuum::outputResults(const std::string& output_file) const {
     int remaining_dirt = 0;
     for (const auto& row : house.getHouseMatrix()) {
         for (int cell : row) {
-            if (cell > 0 && cell < 20) {
+            if (cell > 0 && cell <= 9) {
                 remaining_dirt += cell;
             }
         }
     }
 
     file << "Remaining dirt: " << remaining_dirt << std::endl;
+    printf("%d",house.gettotaldirt());
     file << "Vacuum cleaner status: " << (battery_steps <= 0 ? "Dead" : "Alive") << std::endl;
     file << "Mission status: " << (remaining_dirt == 0 && current_location == house.getDockingStation() ? "Success" : "Failure") << std::endl;
 
@@ -101,21 +112,22 @@ bool Vacuum::move(MoveDirection direction) {
     switch (direction) {
         case MoveDirection::North:
             new_x -= 1;
+            printf("North: ");
             break;
         case MoveDirection::East:
-            new_y += 1;
+            new_y += 1; printf("East: ");
             break;
         case MoveDirection::South:
-            new_x += 1;
+            new_x += 1;  printf("South: ");
             break;
         case MoveDirection::West:
-            new_y -= 1;
+            new_y -= 1;  printf("West: ");
             break;
         case MoveDirection::Stay:
         default:
             return true;
     }
-
+    printf("new cord {%d,%d} \n",new_x,new_y);
     if (new_x >= 0 && new_x < house.getLength() && new_y >= 0 && new_y < house.getWidth() && house.getHouseMatrix()[new_x][new_y] != -1) {
         current_location = {new_x, new_y};
         history.push(direction);
@@ -154,11 +166,16 @@ bool Vacuum::isWall(MoveDirection direction) const {
     return (new_x < 0 || new_x >= house.getLength() || new_y < 0 || new_y >= house.getWidth() || house.getHouseMatrix()[new_x][new_y] == -1);
 }
 
-void Vacuum::chargeBattery() {
-    battery_steps += max_battery_steps / 20;
-    if (battery_steps > max_battery_steps) {
-        battery_steps = max_battery_steps;
+void Vacuum::chargeBattery() { // charging
+    printf("current battery: %d\n",battery_steps);
+    float ch = max_battery_steps/20;
+    int steps_to_charge = ((max_battery_steps - battery_steps) * 20) / max_battery_steps;
+    while (battery_steps < max_battery_steps && steps_to_charge > 0 && total_steps<max_mission_steps) {
+        battery_steps+=ch;
+        steps_to_charge--;
+        total_steps++;
     }
+    printf("current battery: %d\n",battery_steps);
 }
 
 std::string moveDirectionToString(MoveDirection direction) {
@@ -178,6 +195,30 @@ std::string moveDirectionToString(MoveDirection direction) {
     }
 }
 
+void Vacuum::printPath(const std::stack<MoveDirection>& path) const {
+    std::stack<MoveDirection> temp_path = path;
+
+    std::cout << "class vacu Path: ";
+    while (!temp_path.empty()) {
+        MoveDirection move = temp_path.top();
+        temp_path.pop();
+        std::cout << moveDirectionToString(move) << " ";
+    }
+    std::cout << std::endl;
+}
+
+bool Vacuum::located_at_D() const {
+    return (current_location.first==house.getDockingStation().first && current_location.second==house.getDockingStation().second);
+}
+
 void Vacuum::logStep(MoveDirection direction) {
     log.push_back(moveDirectionToString(direction));
+}
+void Vacuum::update() {
+    //after one step update the current steps number and the battery level
+    //Vacuum::setCurrStepsNum(Vacuum::total_steps()+1);
+    //Vacuum::setbattery_steps(Vacuum::battery_steps-1);
+    total_steps++;
+    battery_steps--;
+
 }

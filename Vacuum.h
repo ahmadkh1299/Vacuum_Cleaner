@@ -22,13 +22,26 @@ private:
     int total_steps;
     std::pair<int, int> current_location;
     std::stack<MoveDirection> history;
+    std::pair<int, int> getcurrent_location(){ return current_location;}
+    int getx() const {
+        return current_location.first;
+    }
+    int gety() const{ return current_location.second; }
+    void setbattery_steps(int battery) {
+        battery_steps = battery;
+    }
+    void setCurrStepsNum(int steps) {
+        total_steps = steps;
+    }
 
+    void printPath(const std::stack<MoveDirection>& path) const;
     bool move(MoveDirection direction);
     int getDirtLevel() const;
     bool isWall(MoveDirection direction) const;
     void chargeBattery();
     void logStep(MoveDirection direction);
-
+    bool located_at_D() const;
+    void update();
     std::vector<std::string> log;
 };
 

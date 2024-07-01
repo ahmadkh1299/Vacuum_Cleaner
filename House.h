@@ -18,12 +18,15 @@ public:
     std::pair<int, int> getDockingStation() const;
     int getWidth() const;
     int getLength() const;
+    int gettotaldirt() const;
+    void decreaseTotaldirt();
 
 private:
     std::vector<std::vector<int>> house_matrix;
     std::pair<int, int> docking_station;
     int width;
     int length;
+    int total_dirt;
 };
 
 #endif // HOUSE_H

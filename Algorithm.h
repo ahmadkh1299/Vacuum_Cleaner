@@ -1,11 +1,11 @@
 #ifndef ALGORITHM_H
 #define ALGORITHM_H
 
-#include <vector>
-#include <queue>
-#include <random>
 #include <stack>
 #include <utility>
+#include <vector>
+#include <random>
+#include <string>
 
 enum class MoveDirection {
     North,
@@ -17,22 +17,22 @@ enum class MoveDirection {
 
 class Algorithm {
 public:
-    Algorithm(int width, int length, std::pair<int, int> curr_location, std::pair<int, int> docking_station);
+    Algorithm(int width, int length, std::pair<int, int> curr_location, std::pair<int, int> dock_station);
+
     MoveDirection nextMove(int dirt_level, bool wall_north, bool wall_east, bool wall_south, bool wall_west);
     std::stack<MoveDirection> findPathToDocking(const std::stack<MoveDirection>& history);
+    void printPath(const std::stack<MoveDirection>& path) const;
+    static MoveDirection reverseDirection(MoveDirection direction);
+    static MoveDirection getMoveDirection(std::pair<int, int> from, std::pair<int, int> to);
 
 private:
     int house_width;
     int house_length;
     std::pair<int, int> current_location;
     std::pair<int, int> docking_station;
-    std::vector<std::vector<bool>> visited;
-
     std::default_random_engine generator;
-    std::pair<int, int> directions[4] = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}}; // North, East, South, West
-
-    MoveDirection getMoveDirection(std::pair<int, int> from, std::pair<int, int> to);
-    MoveDirection reverseDirection(MoveDirection direction); // Declare reverseDirection as a member function
 };
+
+std::string moveDirectionToString1(MoveDirection direction);
 
 #endif // ALGORITHM_H
