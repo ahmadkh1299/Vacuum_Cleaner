@@ -11,7 +11,6 @@ void Vacuum::simulate() {
     while (total_steps < max_mission_steps) {
         if (battery_steps <= history.size()) {
             std::stack<MoveDirection> path_to_docking = algorithm.findPathToDocking(history);
-            printPath(path_to_docking);
             while ((!path_to_docking.empty())  && total_steps<max_mission_steps) {
                 move(path_to_docking.top());
                 path_to_docking.pop();
