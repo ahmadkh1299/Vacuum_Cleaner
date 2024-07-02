@@ -53,15 +53,21 @@ private:
     }
 };
 
-int main() {
-    std::string input_file = "C:\\Users\\97250\\Desktop\\TAU\\5th\\Advanced Programing\\HW\\test1.txt";
+
+int main(int argc, char* argv[]) {
+    // Check if the user provided an input file
+    if (argc < 2) {
+        std::cerr << "Usage: " << argv[0] << " <input_file_path>" << std::endl;
+        return 1;
+    }
+    std::string input_file = argv[1];
     ConfigReader config(input_file);
     House house(config.getLayout());
     Algorithm algorithm(house.getWidth(), house.getLength(), house.getDockingStation(), house.getDockingStation());
     Vacuum vacuum(house, algorithm, config.getMaxBatterySteps(), config.getMaxMissionSteps());
 
     vacuum.simulate();
-    vacuum.outputResults("C:\\Users\\97250\\Desktop\\TAU\\5th\\Advanced Programing\\HW\\output.txt");
+    vacuum.outputResults("output.txt");
 
     return 0;
 }
