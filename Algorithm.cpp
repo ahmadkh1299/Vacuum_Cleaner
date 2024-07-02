@@ -1,10 +1,13 @@
 #include "Algorithm.h"
 #include <utility>
 #include <iostream>
+#include <chrono>
 
 Algorithm::Algorithm(int width, int length, std::pair<int, int> curr_location, std::pair<int, int> dock_station)
         : house_width(width), house_length(length), current_location(std::move(curr_location)), docking_station(std::move(dock_station)) {
     // Initialize your algorithm here if needed
+    auto seed = std::chrono::system_clock::now().time_since_epoch().count(); // Added this line
+    generator.seed(seed);
 }
 
 MoveDirection Algorithm::nextMove(int dirt_level, bool wall_north, bool wall_east, bool wall_south, bool wall_west) {
