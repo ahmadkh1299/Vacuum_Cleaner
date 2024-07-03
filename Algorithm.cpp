@@ -11,7 +11,7 @@ Algorithm::Algorithm(int width, int length, std::pair<int, int> curr_location, s
 }
 
 MoveDirection Algorithm::nextMove(int dirt_level, bool wall_north, bool wall_east, bool wall_south, bool wall_west) {
-    if (dirt_level > 0 && dirt_level < 9) {
+    if (dirt_level > 0 && dirt_level <= 9) {
         return MoveDirection::Stay; // Clean the current location
     } else {
         std::vector<MoveDirection> possible_moves;
@@ -112,5 +112,4 @@ MoveDirection Algorithm::getMoveDirection(std::pair<int, int> from, std::pair<in
         return MoveDirection::Stay;
     }
 }
-
 
