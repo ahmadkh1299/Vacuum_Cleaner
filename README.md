@@ -2,8 +2,8 @@
 # Project: Vacuum Cleaner Algorithm
 
 ## Contributors
-- Ahmad Khalaila 207177197
-- Mariam Khalaila 212346076
+- Ahmad Khalaila 
+- Mariam Khalaila 
 
 ## Approach
 
